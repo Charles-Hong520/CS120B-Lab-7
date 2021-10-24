@@ -8,14 +8,16 @@
  *	code, is my own original work.
  */
 #include <avr/io.h>
+#include "io.h"
 #ifdef _SIMULATE_
 #include "simAVRHeader.h"
 #endif
 
 int main(void) {
-    /* Insert DDR and PORT initializations */
-
-    /* Insert your solution below */
+    DDRC = 0xFF; PORTC = 0x00; //lcd data lines
+    DDRD = 0xFf; PORTD = 0x00; //lcd control lines
+    LCD_init();
+    LCD_DisplayString(1, "Hello World");
     while (1) {
 
     }
