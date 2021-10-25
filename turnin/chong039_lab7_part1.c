@@ -7,7 +7,7 @@
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  *  
- *  Demo Link: https://drive.google.com/file/d/18M42JjbhFoLvJB6oDs-cGtleVJkkDd5H/view?usp=sharing
+ *  Demo Link: https://drive.google.com/file/d/19sz0ts9JuQiC-ydv_e3NXjhmWNwcTddn/view?usp=sharing
  */
 #include <avr/io.h>
 #include "io.h"
@@ -52,14 +52,14 @@ void TimerSet(unsigned long M) {
 
 enum State {start, init, dec, inc} state;
 unsigned char i = 0;
-unsigned char disp = 7;
+unsigned char disp = 0;
 
 void Tick() {
 
     switch(state) {
         case start:
         state = init;
-        disp = 7;
+        disp = 0;
         break;
         case init:
         if(A==0x00 || 
@@ -133,10 +133,10 @@ int main(void) {
     DDRA = 0x00; PORTA = 0xFF; //lcd data lines
     DDRC = 0xFF; PORTC = 0x00; //lcd data lines
     DDRD = 0xFF; PORTD = 0x00; //lcd control lines
-    disp = 7;
+    disp = 0;
     // unsigned char* hello= "Hello World";
     // LCD_DisplayString(1, hello);
-    unsigned char* display = "7";
+    unsigned char* display = "0";
     TimerSet(100);
     TimerOn();
     LCD_init();
