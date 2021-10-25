@@ -8,12 +8,12 @@
  *	code, is my own original work.
  */
 #include <avr/io.h>
-
+#include "io.h"
+#include <avr/interrupt.h>
 #ifdef _SIMULATE_
 #include "simAVRHeader.h"
 #endif
-#include "io.h"
-#define A (~PINA&0x03)
+#define A (PINA&0x03)
 volatile unsigned char TimerFlag = 0; //TimerISR sets it to 1, programmer sets it to 0
 unsigned long _avr_timer_M = 1; //start count from here, down to 0. Default 1ms
 unsigned long _avr_timer_cntcurr = 0; //current internal count of 1ms ticks
@@ -50,9 +50,10 @@ void TimerSet(unsigned long M) {
 
 enum State {start, init, dec, inc} state;
 unsigned char i = 0;
-unsigned char disp = 0;
+unsigned char disp = 7;
 
 void Tick() {
+
     switch(state) {
         case start:
         state = init;
@@ -112,14 +113,13 @@ void Tick() {
     }
     switch(state) {
         case inc:
-        i = (i+1)%10;
+        i++;
         break;
         case dec:
-        i = (i+1)%10;
+        i++;
         break;
         case start: break;
         case init:
-        disp = 7;
         i=0;
         break;
 
@@ -129,15 +129,21 @@ int main(void) {
     DDRA = 0x00; PORTA = 0xFF; //lcd data lines
     DDRC = 0xFF; PORTC = 0x00; //lcd data lines
     DDRD = 0xFF; PORTD = 0x00; //lcd control lines
-    LCD_init();
-    unsigned char* hello= "Hello World";
-    LCD_DisplayString(1, hello);
+    disp = 7;
+    // unsigned char* hello= "Hello World";
+    // LCD_DisplayString(1, hello);
+    unsigned char* display = "7";
     TimerSet(100);
     TimerOn();
+    LCD_init();
+    LCD_ClearScreen();
     i=0;
     state = start;
     PORTA = PINA;
+
     while (1) {
+        display[0]=disp+'0';
+        LCD_DisplayString(1,display);
         Tick();
         while(!TimerFlag);
         TimerFlag = 0;
